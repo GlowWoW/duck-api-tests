@@ -18,7 +18,7 @@ public class QuackTest extends TestNGCitrusSpringSupport {
     private static final String URL = "http://localhost:2222";
 
     public void quackDuck(TestCaseRunner runner, int duckID) {
-        String path="/api/duck/action/quack?id=" + duckID + "&repetitionCount=2&soundCount=1"; //Перепутаны повторения и число звуков
+        String path = "/api/duck/action/quack?id=" + duckID + "&repetitionCount=2&soundCount=1"; //Перепутаны повторения и число звуков
         runner.$(http()
                 .client(URL)
                 .send()
@@ -28,9 +28,11 @@ public class QuackTest extends TestNGCitrusSpringSupport {
     }
 
     public void validateResponse(TestCaseRunner runner, String sound) {
-        if (!"quack".equals(sound)) {sound="moo";}
+        if (!"quack".equals(sound)) {
+            sound = "moo";
+        }
         String body = "{\n" +
-                "\"sound\": \"" + sound+"-"+sound +
+                "\"sound\": \"" + sound + "-" + sound +
                 "\"\n}";
         runner.$(
                 http()
@@ -44,7 +46,7 @@ public class QuackTest extends TestNGCitrusSpringSupport {
     }
 
     public void propertiesDuck(TestCaseRunner runner, int duckID) {
-        String path="/api/duck/action/properties?id=" + duckID;
+        String path = "/api/duck/action/properties?id=" + duckID;
         runner.$(http()
                 .client(URL)
                 .send()
@@ -79,6 +81,6 @@ public class QuackTest extends TestNGCitrusSpringSupport {
         propertiesDuck(runner, duckIdOdd);//Получить звук
         String sound = context.getVariable("sound");
         quackDuck(runner, duckIdOdd);
-        validateResponse(runner,sound); //Валидация
+        validateResponse(runner, sound); //Валидация
     }
 }

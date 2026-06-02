@@ -16,7 +16,7 @@ public class FlyTest extends TestNGCitrusSpringSupport {
     private static final String URL = "http://localhost:2222";
 
     public void flyDuck(TestCaseRunner runner, String duckID) {
-        String path="/api/duck/action/fly?id=" + duckID;
+        String path = "/api/duck/action/fly?id=" + duckID;
         runner.$(http()
                 .client(URL)
                 .send()

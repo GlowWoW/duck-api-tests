@@ -18,7 +18,7 @@ public class DeleteTest extends TestNGCitrusSpringSupport {
     private static final String URL = "http://localhost:2222";
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        String path="/api/duck/create";
+        String path = "/api/duck/create";
         runner.$(http()
                 .client(URL)
                 .send()
@@ -33,7 +33,7 @@ public class DeleteTest extends TestNGCitrusSpringSupport {
                         "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
     }
 
-    public String getDuckId(TestCaseRunner runner){
+    public String getDuckId(TestCaseRunner runner) {
         runner.$(http()
                 .client(URL)
                 .receive()
@@ -63,7 +63,7 @@ public class DeleteTest extends TestNGCitrusSpringSupport {
     }
 
     public void duckDelete(TestCaseRunner runner, String duckId) {
-        String path="/api/duck/delete?id=" + duckId;
+        String path = "/api/duck/delete?id=" + duckId;
         runner.$(http()
                 .client(URL)
                 .send()

@@ -17,7 +17,7 @@ public class SwimTest extends TestNGCitrusSpringSupport {
     private static final String URL = "http://localhost:2222";
 
     public void swimDuck(TestCaseRunner runner, String duckID) {
-        String path="/api/duck/action/swim?id=" + duckID;
+        String path = "/api/duck/action/swim?id=" + duckID;
         runner.$(http()
                 .client(URL)
                 .send()
@@ -38,7 +38,7 @@ public class SwimTest extends TestNGCitrusSpringSupport {
     }
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        String path="/api/duck/create";
+        String path = "/api/duck/create";
         runner.$(http()
                 .client(URL)
                 .send()
@@ -53,7 +53,7 @@ public class SwimTest extends TestNGCitrusSpringSupport {
                         "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
     }
 
-    public String getDuckId(TestCaseRunner runner){
+    public String getDuckId(TestCaseRunner runner) {
         runner.$(http()
                 .client(URL)
                 .receive()

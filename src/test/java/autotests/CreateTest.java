@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
+
 import static com.consol.citrus.validation.json.JsonPathMessageValidationContext.Builder.jsonPath;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
@@ -18,7 +19,7 @@ public class CreateTest extends TestNGCitrusSpringSupport {
     private static final String URL = "http://localhost:2222";
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        String path="/api/duck/create";
+        String path = "/api/duck/create";
         runner.$(http()
                 .client(URL)
                 .send()

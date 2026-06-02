@@ -16,7 +16,7 @@ public class PropertiesTest extends TestNGCitrusSpringSupport {
 
 
     public void propertiesDuck(TestCaseRunner runner, int duckID) {
-        String path="/api/duck/action/properties?id=" + duckID;
+        String path = "/api/duck/action/properties?id=" + duckID;
         runner.$(http()
                 .client(URL)
                 .send()
@@ -27,8 +27,8 @@ public class PropertiesTest extends TestNGCitrusSpringSupport {
 
     public void validateResponse(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState, Boolean isEmpty) {
         String body = "{}";
-        if (!isEmpty){
-            body="{\n" +
+        if (!isEmpty) {
+            body = "{\n" +
                     "\"color\": \"" + color + "\",\n" +
                     "\"height\": " + height + ",\n" +
                     "\"material\": \"" + material + "\",\n" +
@@ -56,7 +56,7 @@ public class PropertiesTest extends TestNGCitrusSpringSupport {
         String sound = "quack";
         String wingsState = "FIXED";
         propertiesDuck(runner, duckIdWood);
-        validateResponse(runner, color, height*100, material, sound, wingsState, true); //Вызов метода для валидации тела с пустым ответом
+        validateResponse(runner, color, height * 100, material, sound, wingsState, true); //Вызов метода для валидации тела с пустым ответом
     }
 
     @Test(description = "Свойства утки с нечетным ID с материалом rubber")
@@ -69,6 +69,6 @@ public class PropertiesTest extends TestNGCitrusSpringSupport {
         String sound = "quack";
         String wingsState = "FIXED";
         propertiesDuck(runner, duckIdRubber);
-        validateResponse(runner, color, height*100, material, sound, wingsState, false); //Валидация свойств. Высоту *100 для прохождения валидации
+        validateResponse(runner, color, height * 100, material, sound, wingsState, false); //Валидация свойств. Высоту *100 для прохождения валидации
     }
 }

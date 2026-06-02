@@ -1,26 +1,26 @@
-package autotests;
+package autotests.clients;
 
+import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.annotations.CitrusResource;
-import com.consol.citrus.annotations.CitrusTest;
+import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Test;
-import com.consol.citrus.context.TestContext;
-
+import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DeleteTest extends TestNGCitrusSpringSupport {
-    private static final String URL = "http://localhost:2222";
+@ContextConfiguration(classes = {EndpointConfig.class})
+public class UpdateClient extends TestNGCitrusSpringSupport {
+    @Autowired
+    protected HttpClient duckService;
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
         String path = "/api/duck/create";
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .send()
                 .post(path)
                 .message()
@@ -35,7 +35,7 @@ public class DeleteTest extends TestNGCitrusSpringSupport {
 
     public String getDuckId(TestCaseRunner runner) {
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -43,32 +43,36 @@ public class DeleteTest extends TestNGCitrusSpringSupport {
         return "${duckId}";
     }
 
-    public void validateResponse(TestCaseRunner runner) {
+    public void updateDuck(TestCaseRunner runner, String color, double height, String duckID, String material, String sound, String wingsState) {
+        String path = "/api/duck/update" + "?color=" + color + "&height=" + height + "&id=" + duckID + "&material=" + material + "&sound=" + sound + "&wingsState=" + wingsState;
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .put(path)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+    }
+
+    public void validateResponse(TestCaseRunner runner, String duckId) {
+        String body = "{\"message\":\"Duck with id = " + duckId + " is updated\"}";
         runner.$(
                 http()
-                        .client(URL)
+                        .client(duckService)
                         .receive()
                         .response(HttpStatus.OK)
                         .message()
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\"message\":\"Duck is deleted\"}"));
+                        .body(body));
     }
 
-    @Test(description = "Создание утки для последующего удаления")
-    @CitrusTest
-    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
-        createDuck(runner, "yellow", 0.03, "wood", "quack", "FIXED");
-        duckDelete(runner, getDuckId(runner));
-        validateResponse(runner);
-    }
-
-    public void duckDelete(TestCaseRunner runner, String duckId) {
-        String path = "/api/duck/delete?id=" + duckId;
+    public void duckDelete(TestCaseRunner runner, String duckId) { //Удаление после проверки метода, для корректной работы следующих тестов
+        String path = "/api/duck/delete";
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .send()
                 .delete(path)
                 .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .queryParam("id", duckId));
     }
 }

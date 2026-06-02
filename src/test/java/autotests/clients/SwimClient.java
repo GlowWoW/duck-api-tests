@@ -1,35 +1,37 @@
-package autotests;
+package autotests.clients;
 
+import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.annotations.CitrusResource;
-import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.context.TestContext;
+import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Test;
+import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class SwimTest extends TestNGCitrusSpringSupport {
-    private static final String URL = "http://localhost:2222";
+@ContextConfiguration(classes = {EndpointConfig.class})
+public class SwimClient extends TestNGCitrusSpringSupport {
+    @Autowired
+    protected HttpClient duckService;
 
-    public void swimDuck(TestCaseRunner runner, String duckID) {
-        String path = "/api/duck/action/swim?id=" + duckID;
+    public void swimDuck(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/action/swim";
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .send()
                 .get(path)
                 .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .queryParam("id", duckId));
     }
 
     public void validateResponse(TestCaseRunner runner) {
         runner.$(
                 http()
-                        .client(URL)
+                        .client(duckService)
                         .receive()
                         .response(HttpStatus.NOT_FOUND) //Для всех случаев будет код 404, метод /api/duck/action/swim работает не корректно.
                         .message()
@@ -40,7 +42,7 @@ public class SwimTest extends TestNGCitrusSpringSupport {
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
         String path = "/api/duck/create";
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .send()
                 .post(path)
                 .message()
@@ -55,7 +57,7 @@ public class SwimTest extends TestNGCitrusSpringSupport {
 
     public String getDuckId(TestCaseRunner runner) {
         runner.$(http()
-                .client(URL)
+                .client(duckService)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
@@ -63,19 +65,14 @@ public class SwimTest extends TestNGCitrusSpringSupport {
         return "${duckId}";
     }
 
-    @Test(description = "Заставить поплыть существующую утку")
-    @CitrusTest
-    public void successfulSwimExist(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
-        createDuck(runner, "yellow", 0.03, "rubber", "quack", "FIXED");
-        swimDuck(runner, getDuckId(runner)); //Существующий ID
-        validateResponse(runner);
-    }
-
-    @Test(description = "Заставить поплыть несуществующую утку")
-    @CitrusTest
-    public void successfulSwimNoExist(@Optional @CitrusResource TestCaseRunner runner) {
-        int duckIdNoExist = 99999; //Несуществующий ID
-        swimDuck(runner, Integer.toString(duckIdNoExist));
-        validateResponse(runner);
+    public void duckDelete(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/delete";
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .delete(path)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .queryParam("id", duckId));
     }
 }

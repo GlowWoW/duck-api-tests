@@ -49,20 +49,23 @@ public class FlyTest extends TestNGCitrusSpringSupport {
                         "\"material\": \"" + material + "\",\n" +
                         "\"sound\": \"" + sound + "\",\n" +
                         "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+    }
 
+    public String getDuckId(TestCaseRunner runner) {//Не увидел что в FlyTest не вынес получение id в отдельную функцию
         runner.$(http()
                 .client(URL)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
                 .extract(fromBody().expression("$.id", "duckId")));
+        return "${duckId}";
     }
 
     @Test(description = "Заставить полететь утку с активными крыльями")
     @CitrusTest
     public void successfulFlyActiveWings(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.03, "rubber", "quack", "ACTIVE");
-        flyDuck(runner, "${duckId}");
+        flyDuck(runner, getDuckId(runner));
         validateResponse(runner, "I am flying :)");
     }
 
@@ -70,7 +73,7 @@ public class FlyTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void successfulFlyFixedWings(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.03, "rubber", "quack", "FIXED");
-        flyDuck(runner, "${duckId}");
+        flyDuck(runner, getDuckId(runner));
         validateResponse(runner, "I can not fly :C");
     }
 
@@ -78,7 +81,7 @@ public class FlyTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void successfulFlyUndefinedWings(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.03, "rubber", "quack", "UNDEFINED");
-        flyDuck(runner, "${duckId}");
+        flyDuck(runner, getDuckId(runner));
         validateResponse(runner, "Wings are not detected :(");
     }
 }

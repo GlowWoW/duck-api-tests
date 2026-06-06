@@ -2,12 +2,12 @@ package autotests.tests.duckActionControllerTests;
 
 import autotests.clients.PropertiesClient;
 import autotests.payloads.request.DuckProperties;
-import autotests.payloads.response.DuckPropertiesResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
+
 //Четность не имеет значения в методе Properties, в каждом тесте реализуется 2 создания
 public class PropertiesTest extends PropertiesClient {
 

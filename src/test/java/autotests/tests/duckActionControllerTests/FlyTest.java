@@ -3,7 +3,6 @@ package autotests.tests.duckActionControllerTests;
 import autotests.clients.FlyClient;
 import autotests.payloads.request.DuckProperties;
 import autotests.payloads.response.DuckMessageResponse;
-import autotests.payloads.response.DuckPropertiesResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;

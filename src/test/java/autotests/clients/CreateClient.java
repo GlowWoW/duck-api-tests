@@ -4,8 +4,11 @@ import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
+import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,26 +18,9 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 import static com.consol.citrus.validation.json.JsonPathMessageValidationContext.Builder.jsonPath;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class CreateClient extends TestNGCitrusSpringSupport {
+public class CreateClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
-
-    public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        String path = "/api/duck/create";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .type(MessageType.JSON)
-                .body("{\n" +
-                        "\"color\": \"" + color + "\",\n" +
-                        "\"height\": " + height + ",\n" +
-                        "\"material\": \"" + material + "\",\n" +
-                        "\"sound\": \"" + sound + "\",\n" +
-                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
-    }
 
     public void validateResponse(TestCaseRunner runner, String duckId, String color, double height, String material, String sound, String wingsState) {
         runner.$(
@@ -47,7 +33,7 @@ public class CreateClient extends TestNGCitrusSpringSupport {
                         .type(MessageType.JSON)
                         .extract(fromBody().expression("$.id", "duckId"))
                         .validate(jsonPath()
-                                .expression("$.id", duckId)
+                                .expression("$.id", duckId) //Нельзя проверить "@isNumber()@" через .body
                                 .expression("$.color", color)
                                 .expression("$.height", height)
                                 .expression("$.material", material)
@@ -55,14 +41,29 @@ public class CreateClient extends TestNGCitrusSpringSupport {
                                 .expression("$.wingsState", wingsState)));
     }
 
-    public void duckDelete(TestCaseRunner runner, String duckId) { //Удаление после проверки метода, для корректной работы следующих тестов
-        String path = "/api/duck/delete";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .delete(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckId));
+    public void validateResponse(TestCaseRunner runner, Object expectedPayload) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .type(MessageType.JSON)
+                        .extract(fromBody().expression("$.id", "duckId"))
+                        .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
+    }
+
+    public void validateResponse(TestCaseRunner runner, String resourcePath) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .type(MessageType.JSON)
+                        .extract(fromBody().expression("$.id", "duckId"))
+                        .body(new ClassPathResource(resourcePath)));
     }
 }

@@ -1,6 +1,8 @@
 package autotests.tests.duckActionControllerTests;
 
 import autotests.clients.QuackClient;
+import autotests.payloads.request.DuckProperties;
+import autotests.payloads.response.DuckQuackResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -9,23 +11,50 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
 public class QuackTest extends QuackClient {
-    @Test(description = "Заставить крякать уточку с нечетным id и корректным звуком")
+    @Test(description = "Заставить крякать уточку с нечетным id и корректным звуком, Payloads")
     @CitrusTest
     public void successfulQuackOddGoodSound(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
-        int duckIdOdd = 27; //Нечётный существующий id, звук "quack". Обязательно с материалом rubber, см. PropertiesTest
-        propertiesDuck(runner, duckIdOdd);
-        String sound = getSound(runner, context); //Получить звук
-        quackDuck(runner, Integer.toString(duckIdOdd));
-        validateResponse(runner, sound); //Валидация
+        DuckProperties duckProperties = new DuckProperties()
+                .color("yellow")
+                .height(0.03)
+                .material("rubber")
+                .sound("quack")
+                .wingsState(DuckProperties.WingsState.FIXED);
+        createDuck(runner, duckProperties);
+        extractDuckDetails(runner); // извлекает id и sound
+        String id = context.getVariable("duckId");
+        if (Integer.parseInt(id) % 2 == 0) {
+            duckDelete(runner, id);
+            createDuck(runner, duckProperties);
+            extractDuckDetails(runner);
+            id = context.getVariable("duckId");
+        }
+        quackDuck(runner, id);
+        DuckQuackResponse expectedResponse = new DuckQuackResponse()
+                .sound("quack-quack"); //"repetitionCount"="2", "soundCount"="1"
+        validateResponse(runner, expectedResponse);
+        duckDelete(runner, id);
     }
 
-    @Test(description = "Заставить крякать уточку с четным id и некорректным звуком")
+    @Test(description = "Заставить крякать уточку с четным id и некорректным звуком, Resources")
     @CitrusTest
     public void successfulQuackEvenBadSound(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
-        int duckIdOdd = 12; //Чётный существующий id, звук отличный "quack" (любой другой звук возвращается как "moo"), валидацию не пройдет
-        propertiesDuck(runner, duckIdOdd);
-        String sound = getSound(runner, context); //Получить звук
-        quackDuck(runner, Integer.toString(duckIdOdd));
-        validateResponse(runner, sound); //Валидация
+        DuckProperties duckProperties = new DuckProperties()
+                .color("yellow")
+                .height(0.03)
+                .material("rubber")
+                .sound("boooooo")
+                .wingsState(DuckProperties.WingsState.FIXED);
+        createDuck(runner, duckProperties);
+        extractDuckDetails(runner);
+        String id = context.getVariable("duckId");
+        if (Integer.parseInt(id) % 2 == 1) {
+            duckDelete(runner, id);
+            createDuck(runner, duckProperties);
+            extractDuckDetails(runner);
+        }
+        quackDuck(runner, id);
+        validateResponseResources(runner, "quackTest/DuckQuackMessageResponse.json");
+        duckDelete(runner, id);
     }
 }

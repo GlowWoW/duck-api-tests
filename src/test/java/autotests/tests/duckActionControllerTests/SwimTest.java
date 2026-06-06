@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 public class SwimTest extends SwimClient {
     @Test(description = "Заставить поплыть существующую утку")
     @CitrusTest
-    public void successfulSwimExist(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
+    public void successfulSwimExist(@Optional @CitrusResource TestCaseRunner runner) {
         DuckProperties duckProperties = new DuckProperties()
                 .color("yellow")
                 .height(0.03)

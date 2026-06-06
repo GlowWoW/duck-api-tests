@@ -13,7 +13,7 @@ import com.consol.citrus.context.TestContext;
 public class DeleteTest extends DeleteClient {
     @Test(description = "Создание утки для последующего удаления")
     @CitrusTest
-    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
+    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner) {
         DuckProperties duckProperties = new DuckProperties()
                 .color("yellow")
                 .height(0.03)
@@ -27,7 +27,7 @@ public class DeleteTest extends DeleteClient {
 
     @Test(description = "Создание утки для последующего удаления, валидация с помощью payloads")
     @CitrusTest
-    public void successfulDeletePayloads(@Optional @CitrusResource TestCaseRunner runner, @CitrusResource TestContext context) {
+    public void successfulDeletePayloads(@Optional @CitrusResource TestCaseRunner runner) {
         DuckProperties duckProperties = new DuckProperties()
                 .color("yellow")
                 .height(0.03)

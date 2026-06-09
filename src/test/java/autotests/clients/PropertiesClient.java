@@ -6,6 +6,7 @@ import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,15 +19,9 @@ public class PropertiesClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
 
-    public void propertiesDuck(TestCaseRunner runner, String duckID) {
-        String path = "/api/duck/action/properties";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckID));
+    @Step("Эндпоинт для свойств утки")
+    public void propertiesDuck(TestCaseRunner runner, String duckId) {
+        actionDuck(runner, "properties", duckId);
     }
 
     public void validateResponse(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState, Boolean isEmpty) {

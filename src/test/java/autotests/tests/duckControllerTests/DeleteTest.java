@@ -1,52 +1,41 @@
 package autotests.tests.duckControllerTests;
 
 import autotests.clients.DeleteClient;
-import autotests.payloads.request.DuckProperties;
 import autotests.payloads.response.DuckMessageResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
-import com.consol.citrus.context.TestContext;
 
+@Epic("Тесты duck-controller")
+@Feature("Удаление уточки")
+@Story("Эндпоинт /api/duck/delete")
 public class DeleteTest extends DeleteClient {
-    @Test(description = "Создание утки для последующего удаления")
+    @Test(description = "Создание утки для последующего удаления с помощью resources")
     @CitrusTest
-    public void successfulDelete(@Optional @CitrusResource TestCaseRunner runner) {
-        DuckProperties duckProperties = new DuckProperties()
-                .color("yellow")
-                .height(0.03)
-                .material("wood")
-                .sound("quack")
-                .wingsState(DuckProperties.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        duckDelete(runner, getDuckId(runner));
-        validateResponse(runner);
+    public void successfulDeleteResources(@Optional @CitrusResource TestCaseRunner runner) {
+        getNextIdDB(runner);
+        String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
+        databaseUpdate(runner, sqlInsert);
+        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
+        duckDelete(runner, "${duckId}");
+        validateResponseResources(runner, "deleteTest/DuckDeleteMessageResponse.json");
     }
 
     @Test(description = "Создание утки для последующего удаления, валидация с помощью payloads")
     @CitrusTest
     public void successfulDeletePayloads(@Optional @CitrusResource TestCaseRunner runner) {
-        DuckProperties duckProperties = new DuckProperties()
-                .color("yellow")
-                .height(0.03)
-                .material("wood")
-                .sound("quack")
-                .wingsState(DuckProperties.WingsState.FIXED);
-        createDuck(runner, duckProperties);
-        duckDelete(runner, getDuckId(runner));
+        getNextIdDB(runner);
+        String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
+        databaseUpdate(runner, sqlInsert);
+        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
+        duckDelete(runner, "${duckId}");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Duck is deleted");
         validateResponse(runner, expectedResponse);
-    }
-
-    @Test(description = "Обновление цвета и звука утки с помощью resources")
-    @CitrusTest
-    public void successfulUpdateColorSound(@Optional @CitrusResource TestCaseRunner runner) {
-        createDuck(runner, "yellow", 0.03, "woodd", "quack", "FIXED");
-        duckDelete(runner, getDuckId(runner));
-        validateResponseResources(runner, "deleteTest/DuckDeleteMessageResponse.json");
-        duckDelete(runner, "${duckId}");
     }
 }

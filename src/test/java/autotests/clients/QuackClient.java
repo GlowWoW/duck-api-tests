@@ -4,6 +4,7 @@ import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ public class QuackClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
 
+    @Step("Эндпоинт для кряканья утки")
     public void quackDuck(TestCaseRunner runner, String duckId) {
         String path = "/api/duck/action/quack"; //Перепутаны повторения и число звуков
         runner.$(http()
@@ -29,7 +31,7 @@ public class QuackClient extends DuckClient {
 
 
     public void validateResponse(TestCaseRunner runner, String sound) {
-        if (!"quack".equals(sound)) {
+        if (!"quack" .equals(sound)) {
             sound = "moo";
         }
         String body = "{\n" +
@@ -44,15 +46,5 @@ public class QuackClient extends DuckClient {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .type(MessageType.JSON)
                         .body(body));
-    }
-
-    public void propertiesDuck(TestCaseRunner runner, int duckID) {
-        String path = "/api/duck/action/properties?id=" + duckID;
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 }

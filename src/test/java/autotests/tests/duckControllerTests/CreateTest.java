@@ -2,25 +2,23 @@ package autotests.tests.duckControllerTests;
 
 import autotests.clients.CreateClient;
 import autotests.payloads.request.DuckProperties;
-import autotests.payloads.response.DuckPropertiesResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+@Epic("Тесты duck-controller")
+@Feature("Создание уточки")
+@Story("Эндпоинт /api/duck/create")
 public class CreateTest extends CreateClient {
-    @Test(description = "Создание утки с material = rubber")
-    @CitrusTest
-    public void createRubber(@Optional @CitrusResource TestCaseRunner runner) {
-        createDuck(runner, "yellow", 0.03, "rubber", "quack", "FIXED");
-        validateResponse(runner, "@isNumber()@", "yellow", 0.03, "rubber", "quack", "FIXED");
-        duckDelete(runner, "${duckId}");//Удаление после создания
-    }
-
     @Test(description = "Создание утки с material = rubber, с помощью payloads")
     @CitrusTest
     public void createRubberWithPayloads(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.variable("duckId", "citrus:randomNumber(6)");
         DuckProperties duckProperties = new DuckProperties()
                 .color("yellow")
                 .height(0.03)
@@ -28,32 +26,20 @@ public class CreateTest extends CreateClient {
                 .sound("quack")
                 .wingsState(DuckProperties.WingsState.FIXED);
         createDuck(runner, duckProperties);
-
-        DuckPropertiesResponse expectedResponse = new DuckPropertiesResponse()
-                .color("yellow")
-                .height(0.03)
-                .id("@isNumber()@") //Пришлось в payloads для id объявить тип Object
-                .material("rubber")
-                .sound("quack")
-                .wingsState(DuckPropertiesResponse.WingsState.FIXED);
-        validateResponse(runner, expectedResponse);
-        duckDelete(runner, "${duckId}");//Удаление после создания
+        validateResponse(runner, "@isNumber()@", "yellow", 0.03, "rubber", "quack", "FIXED");
+        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
+        deleteDuckFromDB(runner, "${duckId}");
     }
 
-    @Test(description = "Создание утки с material = rubber, с помощью resources")
-    @CitrusTest
-    public void createRubberWithResources(@Optional @CitrusResource TestCaseRunner runner) {
-        createDuckResources(runner, "createTest/DuckProperties.json");
-        validateResponse(runner, "createTest/DuckPropertiesResponse.json");
-        duckDelete(runner, "${duckId}");//Удаление после создания
-    }
 
     @Test(description = "Создание утки с material = wood")
     @CitrusTest
     public void createWood(@Optional @CitrusResource TestCaseRunner runner) {
-        createDuck(runner, "yellow", 0.03, "wood", "quack", "FIXED");
-        validateResponse(runner, "@isNumber()@", "yellow", 0.03, "wood", "quack", "FIXED");
-        duckDelete(runner, "${duckId}");//Удаление после создания
+        runner.variable("duckId", "citrus:randomNumber(6)");
+        String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'wood','quack', 'FIXED');";
+        databaseUpdate(runner, sqlInsert);
+        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "wood", "quack", "FIXED");
+        deleteDuckFromDB(runner, "${duckId}");
     }
 }
 

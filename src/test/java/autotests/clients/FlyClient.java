@@ -3,6 +3,7 @@ package autotests.clients;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,15 +16,9 @@ public class FlyClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
 
+    @Step("Эндпоинт для полета утки")
     public void flyDuck(TestCaseRunner runner, String duckId) {
-        String path = "/api/duck/action/fly";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckId));
+        actionDuck(runner, "fly", duckId);
     }
 
     public void validateResponse(TestCaseRunner runner, String textReceive) {

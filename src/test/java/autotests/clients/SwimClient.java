@@ -3,11 +3,8 @@ package autotests.clients;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.message.MessageType;
-import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,15 +16,9 @@ public class SwimClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
 
+    @Step("Эндпоинт для плавания утки")
     public void swimDuck(TestCaseRunner runner, String duckId) {
-        String path = "/api/duck/action/swim";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckId));
+        actionDuck(runner, "swim", duckId);
     }
 
     public void validateResponse(TestCaseRunner runner) {
@@ -41,27 +32,4 @@ public class SwimClient extends DuckClient {
                         .body("{\n\"message\": \"Paws are not found ((((\"\n}"));
     }
 
-    public void validateResponseStatus(TestCaseRunner runner, Object expectedPayload,HttpStatus status) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(status)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
-    }
-
-    public void validateResponseResourcesStatus(TestCaseRunner runner, String resourcePath,HttpStatus status) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(status)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ClassPathResource(resourcePath)));
-    }
 }

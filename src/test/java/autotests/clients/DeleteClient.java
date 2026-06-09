@@ -3,6 +3,7 @@ package autotests.clients;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ public class DeleteClient extends DuckClient {
     @Autowired
     protected HttpClient duckService;
 
+    @Step("Валидация удаления утки")
     public void validateResponse(TestCaseRunner runner) {
         runner.$(
                 http()

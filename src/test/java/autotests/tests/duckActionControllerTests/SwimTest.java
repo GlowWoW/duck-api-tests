@@ -1,6 +1,6 @@
 package autotests.tests.duckActionControllerTests;
 
-import autotests.clients.SwimClient;
+import autotests.clients.DuckClient;
 import autotests.payloads.response.DuckMessageResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
 @Epic("Тесты duck-action-controller")
 @Feature("Плаванье уточки")
 @Story("Эндпоинт /api/duck/action/swim")
-public class SwimTest extends SwimClient {
+public class SwimTest extends DuckClient {
     @Test(description = "Заставить поплыть существующую утку")
     @CitrusTest
     public void successfulSwimExist(@Optional @CitrusResource TestCaseRunner runner) {
@@ -25,15 +25,16 @@ public class SwimTest extends SwimClient {
         swimDuck(runner, "${duckId}");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Paws are not found ((((");
-        validateResponseStatus(runner, expectedResponse, HttpStatus.NOT_FOUND);
-        duckDelete(runner, "${duckId}");
+        validateResponse(runner, expectedResponse, HttpStatus.NOT_FOUND);
+        deleteDuck(runner, "${duckId}");
     }
+
 
     @Test(description = "Заставить поплыть несуществующую утку")
     @CitrusTest
     public void successfulSwimNoExist(@Optional @CitrusResource TestCaseRunner runner) {
-        int duckIdNoExist = 99999; //Несуществующий ID
-        swimDuck(runner, Integer.toString(duckIdNoExist));
-        validateResponseResourcesStatus(runner, "swimTest/DuckSwimMessageResponse.json", HttpStatus.NOT_FOUND);
+        String duckIdNoExists = "99999"; //Несуществующий ID
+        swimDuck(runner, duckIdNoExists);
+        validateResponseResources(runner, "swimTest/DuckSwimMessageResponse.json", HttpStatus.NOT_FOUND);
     }
 }

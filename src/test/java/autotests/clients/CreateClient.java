@@ -6,6 +6,7 @@ import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,5 +38,30 @@ public class CreateClient extends DuckClient {
                                 .expression("$.material", material)
                                 .expression("$.sound", sound)
                                 .expression("$.wingsState", wingsState)));
+    }
+    //с извлечением id
+    public void validateResponseResources(TestCaseRunner runner, String resourcePath) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .type(MessageType.JSON)
+                        .extract(fromBody().expression("$.id", "duckId"))
+                        .body(new ClassPathResource(resourcePath)));
+    }
+
+    @Step("Создание утки через передачу string в body (json)") //В других ветках метод активно использовался, оставил
+    public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
+        String path = "/api/duck/create";
+        String body = "{\n" +
+                "\"color\": \"" + color + "\",\n" +
+                "\"height\": " + height + ",\n" +
+                "\"material\": \"" + material + "\",\n" +
+                "\"sound\": \"" + sound + "\",\n" +
+                "\"wingsState\": \"" + wingsState + "\"\n" + "}";
+        sendPostMethodObject(runner,path, body, duckService);
     }
 }

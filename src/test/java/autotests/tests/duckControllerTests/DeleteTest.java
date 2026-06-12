@@ -1,6 +1,7 @@
 package autotests.tests.duckControllerTests;
 
-import autotests.clients.DeleteClient;
+
+import autotests.clients.DuckClient;
 import autotests.payloads.response.DuckMessageResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -14,7 +15,7 @@ import org.testng.annotations.Test;
 @Epic("Тесты duck-controller")
 @Feature("Удаление уточки")
 @Story("Эндпоинт /api/duck/delete")
-public class DeleteTest extends DeleteClient {
+public class DeleteTest extends DuckClient {
     @Test(description = "Создание утки для последующего удаления с помощью resources")
     @CitrusTest
     public void successfulDeleteResources(@Optional @CitrusResource TestCaseRunner runner) {
@@ -22,7 +23,7 @@ public class DeleteTest extends DeleteClient {
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
         validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-        duckDelete(runner, "${duckId}");
+        deleteDuck(runner, "${duckId}");
         validateResponseResources(runner, "deleteTest/DuckDeleteMessageResponse.json");
     }
 
@@ -33,7 +34,7 @@ public class DeleteTest extends DeleteClient {
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
         validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-        duckDelete(runner, "${duckId}");
+        deleteDuck(runner, "${duckId}");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Duck is deleted");
         validateResponse(runner, expectedResponse);

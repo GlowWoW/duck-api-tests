@@ -1,6 +1,6 @@
 package autotests.tests.duckControllerTests;
 
-import autotests.clients.UpdateClient;
+import autotests.clients.DuckClient;
 import autotests.payloads.response.DuckMessageResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -16,7 +16,7 @@ import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 @Epic("Тесты duck-controller")
 @Feature("Обновление уточки")
 @Story("Эндпоинт /api/duck/update")
-public class UpdateTest extends UpdateClient {
+public class UpdateTest extends DuckClient {
 
     @Test(description = "Обновление цвета и высоты утки, string")
     @CitrusTest
@@ -28,7 +28,7 @@ public class UpdateTest extends UpdateClient {
         databaseUpdate(runner, sqlInsert);
         validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
         updateDuck(runner, "black", 0.05, "${duckId}", "wood", "quack", "FIXED");
-        validateResponse(runner, "${duckId}"); //Валидация обновления
+        validateResponse(runner, "{\"message\":\"Duck with id = " + "${duckId}" + " is updated\"}"); //Валидация обновления
 
     }
 

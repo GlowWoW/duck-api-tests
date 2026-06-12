@@ -1,6 +1,6 @@
 package autotests.tests.duckActionControllerTests;
 
-import autotests.clients.QuackClient;
+import autotests.clients.DuckClient;
 import autotests.payloads.response.DuckQuackResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -16,7 +16,7 @@ import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 @Epic("Тесты duck-action-controller")
 @Feature("Кряканье уточки")
 @Story("Эндпоинт /api/duck/action/quack")
-public class QuackTest extends QuackClient {
+public class QuackTest extends DuckClient {
     @Test(description = "Заставить крякать уточку с нечетным id и корректным звуком, Payloads")
     @CitrusTest
     public void successfulQuackOddGoodSound(@Optional @CitrusResource TestCaseRunner runner) {
@@ -31,6 +31,7 @@ public class QuackTest extends QuackClient {
         DuckQuackResponse expectedResponse = new DuckQuackResponse()
                 .sound("quack-quack"); //"repetitionCount"="2", "soundCount"="1"
         validateResponse(runner, expectedResponse);
+
     }
 
     @Test(description = "Заставить крякать уточку с четным id и некорректным звуком, Resources")
@@ -45,6 +46,5 @@ public class QuackTest extends QuackClient {
 
         quackDuck(runner, duckId);
         validateResponseResources(runner, "quackTest/DuckQuackMessageResponse.json");
-        duckDelete(runner, duckId);
     }
 }

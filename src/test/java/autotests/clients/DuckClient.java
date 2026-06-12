@@ -1,35 +1,22 @@
 package autotests.clients;
 
-import autotests.EndpointConfig;
+import autotests.BaseTest;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.message.MessageType;
-import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
-import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckClient extends TestNGCitrusSpringSupport {
-    @Autowired
-    protected HttpClient duckService;
+public class DuckClient extends BaseTest {
 
-    @Autowired
-    protected SingleConnectionDataSource testDb;
-
-    public void databaseUpdate(TestCaseRunner runner, String query) {
-        runner.$(sql(testDb).statement(query));
+    @Step("Создание БД")
+    public void databaseCreate(TestCaseRunner runner, String duckId, String color, double height, String material, String sound, String wingsState) {
+        String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (" +
+                "'" + duckId + "', '" + color + "', " + height + ", '" + material + "', '" + sound + "', '" + wingsState + "')";
+        databaseUpdate(runner, sqlInsert);
     }
+
 
     @Step("Возвращение следующего id для создания утки")
     public void getNextIdDB(TestCaseRunner runner) {
@@ -51,126 +38,77 @@ public class DuckClient extends TestNGCitrusSpringSupport {
 
     }
 
+    @Step("Удаление утки через БД")
     protected void deleteDuckFromDB(TestCaseRunner runner, String duckId) {
         runner.$(sql(testDb)
                 .statement("DELETE FROM DUCK WHERE ID=" + duckId));
     }
 
-    @Step("Создание утки через передачу string в body (json)")
-    public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
-        String path = "/api/duck/create";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{\n" +
-                        "\"color\": \"" + color + "\",\n" +
-                        "\"height\": " + height + ",\n" +
-                        "\"material\": \"" + material + "\",\n" +
-                        "\"sound\": \"" + sound + "\",\n" +
-                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+    @Step("Обновление утки через String")
+    public void updateDuck(TestCaseRunner runner, String color, double height, String duckID, String material, String sound, String wingsState) {
+        String path = "/api/duck/update" + "?color=" + color + "&height=" + height + "&id=" + duckID + "&material=" + material + "&sound=" + sound + "&wingsState=" + wingsState;
+        sendPutMethod(runner, path, duckService);
+    }
+
+    @Step("Эндпоинт Fly")
+    public void flyDuck(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/action/fly";
+        sendGetQueryMethod(runner, path, "id", duckId, duckService);
+    }
+
+    @Step("Эндпоинт для кряканья утки")
+    public void quackDuck(TestCaseRunner runner, String duckId) { //Требуются спецефические параметры repetitionCount и soundCount. Оставил QuackClient
+        String path = "/api/duck/action/quack?id=" + duckId + "&repetitionCount=2&soundCount=1"; //Перепутаны повторения и число звуков
+        sendGetMethod(runner, path, duckService);
+    }
+
+    @Step("Эндпоинт Swim")
+    public void swimDuck(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/action/swim";
+        sendGetQueryMethod(runner, path, "id", duckId, duckService);
+    }
+
+    @Step("Эндпоинт Properties")
+    public void propertiesDuck(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/action/properties";
+        sendGetQueryMethod(runner, path, "id", duckId, duckService);
+    }
+
+    @Step("Обновление утки через String")
+    public void deleteDuck(TestCaseRunner runner, String duckId) {
+        String path = "/api/duck/delete";
+        sendDeleteMethod(runner, path, "id", duckId, duckService);
     }
 
     @Step("Создание утки через payload")
     public void createDuck(TestCaseRunner runner, Object payload) {
         String path = "/api/duck/create";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ObjectMappingPayloadBuilder(payload, new ObjectMapper())));
+        sendPostMethodObject(runner, path, payload, duckService);
     }
 
     @Step("Создание утки через resources")
-    public void createDuckResources(TestCaseRunner runner, String resource) { //Для resources
+    public void createDuckResources(TestCaseRunner runner, String resource) {
         String path = "/api/duck/create";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource(resource)));
+        sendPostMethodResources(runner, path, resource, duckService);
     }
 
-    @Step("Удаление утки через endpoint")
-    public void duckDelete(TestCaseRunner runner, String duckId) { //Удаление утки
-        String path = "/api/duck/delete";
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .delete(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckId));
-    }
 
     @Step("Валидация через payload")
     public void validateResponse(TestCaseRunner runner, Object expectedPayload) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
+        validateResponse(runner, expectedPayload, HttpStatus.OK);
     }
+
 
     @Step("Валидация через resources")
     public void validateResponseResources(TestCaseRunner runner, String resourcePath) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ClassPathResource(resourcePath)));
+        validateResponseResources(runner, resourcePath, HttpStatus.OK);
     }
 
-    @Step("Эндпоинт для action методов")
-    public void actionDuck(TestCaseRunner runner, String action, String duckId) {
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get("/api/duck/action/" + action)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .queryParam("id", duckId));
+    @Step("Валидация через String")
+    public void validateResponse(TestCaseRunner runner, String body) {
+        validateResponse(runner, body, HttpStatus.OK);
     }
 
-    @Step("Валидация через payload, с передачей статуса")
-    public void validateResponseStatus(TestCaseRunner runner, Object expectedPayload, HttpStatus status) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(status)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
-    }
-
-    @Step("Валидация через resources, с передачей статуса")
-    public void validateResponseResourcesStatus(TestCaseRunner runner, String resourcePath, HttpStatus status) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(status)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ClassPathResource(resourcePath)));
-    }
 
 }
 

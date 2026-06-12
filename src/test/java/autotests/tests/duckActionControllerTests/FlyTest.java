@@ -1,6 +1,6 @@
 package autotests.tests.duckActionControllerTests;
 
-import autotests.clients.FlyClient;
+import autotests.clients.DuckClient;
 import autotests.payloads.response.DuckMessageResponse;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -16,7 +16,7 @@ import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 @Epic("Тесты duck-action-controller")
 @Feature("Полет уточки")
 @Story("Эндпоинт /api/duck/action/fly")
-public class FlyTest extends FlyClient {
+public class FlyTest extends DuckClient {
     @Test(description = "Заставить полететь утку с активными крыльями")
     @CitrusTest
     public void successfulFlyActiveWings(@Optional @CitrusResource TestCaseRunner runner) {
@@ -28,7 +28,7 @@ public class FlyTest extends FlyClient {
         validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "ACTIVE");
 
         flyDuck(runner, "${duckId}");
-        validateResponse(runner, "I am flying :)");
+        validateResponse(runner, "{\n\"message\": \"" + "I am flying :)" + "\"\n}");
     }
 
     @Test(description = "Заставить полететь утку со связанными крыльями, с помощью payloads")

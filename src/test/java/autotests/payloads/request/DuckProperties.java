@@ -22,6 +22,7 @@ public class DuckProperties {
     String sound;
     @JsonProperty("wingsState")
     WingsState wingsState;
+
     public enum WingsState {
         ACTIVE, FIXED, UNDEFINED
     }

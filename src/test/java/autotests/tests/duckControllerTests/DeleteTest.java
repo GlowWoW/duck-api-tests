@@ -9,7 +9,6 @@ import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
-import com.consol.citrus.context.TestContext;
 
 public class DeleteTest extends DuckClient {
     @Test(description = "Создание утки для последующего удаления")
@@ -23,7 +22,7 @@ public class DeleteTest extends DuckClient {
                 .wingsState(DuckProperties.WingsState.FIXED);
         createDuck(runner, duckProperties);
         duckDelete(runner, getDuckId(runner));
-        validateResponse(runner,"{\"message\":\"Duck is deleted\"}");
+        validateResponse(runner, "{\"message\":\"Duck is deleted\"}");
     }
 
     @Test(description = "Создание утки для последующего удаления, валидация с помощью payloads")

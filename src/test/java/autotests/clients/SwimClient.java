@@ -1,16 +1,12 @@
 package autotests.clients;
 
-import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
@@ -38,7 +34,7 @@ public class SwimClient extends DuckClient {
                         .body(body));
     }
 
-    public void validateResponseStatusBody(TestCaseRunner runner, Object expectedPayload,HttpStatus status) {
+    public void validateResponseStatusBody(TestCaseRunner runner, Object expectedPayload, HttpStatus status) {
         runner.$(
                 http()
                         .client(duckService)
@@ -50,7 +46,7 @@ public class SwimClient extends DuckClient {
                         .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
     }
 
-    public void validateResponseResourcesStatusBody(TestCaseRunner runner, String resourcePath,HttpStatus status) {
+    public void validateResponseResourcesStatusBody(TestCaseRunner runner, String resourcePath, HttpStatus status) {
         runner.$(
                 http()
                         .client(duckService)

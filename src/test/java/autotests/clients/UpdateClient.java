@@ -32,15 +32,4 @@ public class UpdateClient extends DuckClient {
                 .body(new ObjectMappingPayloadBuilder(payload, new ObjectMapper())));
 
     }
-
-    public void validateResponse(TestCaseRunner runner, String body) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(body));
-    }
 }

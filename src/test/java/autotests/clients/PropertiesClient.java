@@ -42,15 +42,4 @@ public class PropertiesClient extends DuckClient {
                         .body(body));
     }
 
-    public void validateResponse(TestCaseRunner runner, Object expectedPayload) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
-    }
 }

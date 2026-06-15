@@ -25,7 +25,7 @@ public class SwimTest extends SwimClient {
         swimDuck(runner, getDuckId(runner));
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Paws are not found ((((");
-        validateResponseStatus(runner, expectedResponse, HttpStatus.NOT_FOUND);
+        validateResponseStatusBody(runner, expectedResponse, HttpStatus.NOT_FOUND);
         duckDelete(runner, "${duckId}");
     }
 
@@ -34,6 +34,6 @@ public class SwimTest extends SwimClient {
     public void successfulSwimNoExist(@Optional @CitrusResource TestCaseRunner runner) {
         int duckIdNoExist = 99999; //Несуществующий ID
         swimDuck(runner, Integer.toString(duckIdNoExist));
-        validateResponseResourcesStatus(runner, "swimTest/DuckSwimMessageResponse.json",HttpStatus.NOT_FOUND);
+        validateResponseResourcesStatusBody(runner, "swimTest/DuckSwimMessageResponse.json",HttpStatus.NOT_FOUND);
     }
 }

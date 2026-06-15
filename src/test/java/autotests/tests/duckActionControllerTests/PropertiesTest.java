@@ -22,7 +22,8 @@ public class PropertiesTest extends PropertiesClient {
                 .wingsState(DuckProperties.WingsState.FIXED);
         createDuck(runner, duckProperties);
         propertiesDuck(runner, getDuckId(runner));
-        validateResponse(runner, null);
+        DuckProperties duckPropertiesEmpty = new DuckProperties();
+        validateResponse(runner, duckPropertiesEmpty);
         duckDelete(runner, "${duckId}");//Удаление после создания
     }
 
@@ -70,7 +71,7 @@ public class PropertiesTest extends PropertiesClient {
         propertiesDuck(runner, getDuckId(runner));
         DuckProperties expectedResponse = new DuckProperties()
                 .color("yellow")
-                .height(3)
+                .height(3.0)
                 .material("rubber")
                 .sound("quack")
                 .wingsState(DuckProperties.WingsState.FIXED);

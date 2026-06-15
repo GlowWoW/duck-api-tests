@@ -16,10 +16,7 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 import static com.consol.citrus.validation.json.JsonPathMessageValidationContext.Builder.jsonPath;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
 public class CreateClient extends DuckClient {
-    @Autowired
-    protected HttpClient duckService;
 
     public void validateResponse(TestCaseRunner runner, String duckId, String color, double height, String material, String sound, String wingsState) {
         runner.$(

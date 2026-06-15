@@ -15,7 +15,7 @@ public class DuckProperties {
     @JsonProperty("color")
     String color;
     @JsonProperty("height")
-    double height;
+    Double height;
     @JsonProperty("material")
     String material;
     @JsonProperty("sound")

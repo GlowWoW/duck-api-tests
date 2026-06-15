@@ -21,7 +21,7 @@ public class FlyTest extends FlyClient {
                 .wingsState(DuckProperties.WingsState.ACTIVE);
         createDuck(runner, duckProperties);
         flyDuck(runner, getDuckId(runner));
-        validateResponse(runner, "I am flying :)");
+        validateResponse(runner, "{\"message\":\"I am flying :)\"}");
         duckDelete(runner, "${duckId}");
     }
 

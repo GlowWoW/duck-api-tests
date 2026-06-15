@@ -21,12 +21,12 @@ public class QuackTest extends QuackClient {
                 .sound("quack")
                 .wingsState(DuckProperties.WingsState.FIXED);
         createDuck(runner, duckProperties);
-        extractDuckDetails(runner); // извлекает id и sound
+        getDuckId(runner); // извлекает id и sound
         String id = context.getVariable("duckId");
         if (Integer.parseInt(id) % 2 == 0) {
             duckDelete(runner, id);
             createDuck(runner, duckProperties);
-            extractDuckDetails(runner);
+            getDuckId(runner);
             id = context.getVariable("duckId");
         }
         quackDuck(runner, id);
@@ -46,12 +46,12 @@ public class QuackTest extends QuackClient {
                 .sound("boooooo")
                 .wingsState(DuckProperties.WingsState.FIXED);
         createDuck(runner, duckProperties);
-        extractDuckDetails(runner);
+        getDuckId(runner);
         String id = context.getVariable("duckId");
         if (Integer.parseInt(id) % 2 == 1) {
             duckDelete(runner, id);
             createDuck(runner, duckProperties);
-            extractDuckDetails(runner);
+            getDuckId(runner);
         }
         quackDuck(runner, id);
         validateResponseResources(runner, "quackTest/DuckQuackMessageResponse.json");

@@ -12,10 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
 public class UpdateClient extends DuckClient {
-    @Autowired
-    protected HttpClient duckService;
 
     public void updateDuck(TestCaseRunner runner, String color, double height, String duckID, String material, String sound, String wingsState) {
         String path = "/api/duck/update" + "?color=" + color + "&height=" + height + "&id=" + duckID + "&material=" + material + "&sound=" + sound + "&wingsState=" + wingsState;
@@ -40,8 +37,7 @@ public class UpdateClient extends DuckClient {
 
     }
 
-    public void validateResponse(TestCaseRunner runner, String duckId) {
-        String body = "{\"message\":\"Duck with id = " + duckId + " is updated\"}";
+    public void validateResponse(TestCaseRunner runner, String body) {
         runner.$(
                 http()
                         .client(duckService)

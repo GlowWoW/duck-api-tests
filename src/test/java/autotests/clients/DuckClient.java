@@ -81,15 +81,6 @@ public class DuckClient extends TestNGCitrusSpringSupport {
         return "${duckId}";
     }
 
-    public void extractDuckDetails(TestCaseRunner runner) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .type(MessageType.JSON)
-                .extract(fromBody().expression("$.id", "duckId")));
-    }
 
     public void validateResponse(TestCaseRunner runner, Object expectedPayload) {
         runner.$(
@@ -113,6 +104,17 @@ public class DuckClient extends TestNGCitrusSpringSupport {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .type(MessageType.JSON)
                         .body(new ClassPathResource(resourcePath)));
+    }
+
+    public void validateResponse(TestCaseRunner runner, String body) {
+        runner.$(
+                http()
+                        .client(duckService)
+                        .receive()
+                        .response(HttpStatus.OK)
+                        .message()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(body));
     }
 
 }

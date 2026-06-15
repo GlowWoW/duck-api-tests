@@ -16,7 +16,7 @@ public class UpdateTest extends UpdateClient {
     public void successfulUpdateColorHeight(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.03, "woodd", "quack", "FIXED");
         updateDuck(runner, "black", 0.05, getDuckId(runner), "wood", "quack", "FIXED");
-        validateResponse(runner, "${duckId}"); //Валидация обновления
+        validateResponse(runner, "{\"message\":\"Duck with id = ${duckId} is updated\"}"); //Валидация обновления
         duckDelete(runner, "${duckId}");
     }
 

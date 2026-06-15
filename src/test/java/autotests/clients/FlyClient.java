@@ -10,10 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
 public class FlyClient extends DuckClient {
-    @Autowired
-    protected HttpClient duckService;
 
     public void flyDuck(TestCaseRunner runner, String duckId) {
         String path = "/api/duck/action/fly";
@@ -24,16 +21,5 @@ public class FlyClient extends DuckClient {
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .queryParam("id", duckId));
-    }
-
-    public void validateResponse(TestCaseRunner runner, String textReceive) {
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body("{\n\"message\": \"" + textReceive + "\"\n}"));
     }
 }

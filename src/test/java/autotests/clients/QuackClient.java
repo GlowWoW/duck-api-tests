@@ -11,10 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
 public class QuackClient extends DuckClient {
-    @Autowired
-    protected HttpClient duckService;
 
     public void quackDuck(TestCaseRunner runner, String duckId) {
         String path = "/api/duck/action/quack"; //Перепутаны повторения и число звуков
@@ -25,34 +22,5 @@ public class QuackClient extends DuckClient {
                 .queryParam("id", duckId)
                 .queryParam("repetitionCount", "2")
                 .queryParam("soundCount", "1"));
-    }
-
-
-    public void validateResponse(TestCaseRunner runner, String sound) {
-        if (!"quack".equals(sound)) {
-            sound = "moo";
-        }
-        String body = "{\n" +
-                "\"sound\": \"" + sound + "-" + sound +
-                "\"\n}";
-        runner.$(
-                http()
-                        .client(duckService)
-                        .receive()
-                        .response(HttpStatus.OK)
-                        .message()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .type(MessageType.JSON)
-                        .body(body));
-    }
-
-    public void propertiesDuck(TestCaseRunner runner, int duckID) {
-        String path = "/api/duck/action/properties?id=" + duckID;
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(path)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 }

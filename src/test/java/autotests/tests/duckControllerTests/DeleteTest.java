@@ -21,7 +21,6 @@ public class DeleteTest extends DeleteClient {
         getNextIdDB(runner);
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
         duckDelete(runner, "${duckId}");
         validateResponseResources(runner, "deleteTest/DuckDeleteMessageResponse.json");
     }
@@ -32,7 +31,6 @@ public class DeleteTest extends DeleteClient {
         getNextIdDB(runner);
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
         duckDelete(runner, "${duckId}");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Duck is deleted");

@@ -26,9 +26,9 @@ public class UpdateTest extends UpdateClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
         updateDuck(runner, "black", 0.05, "${duckId}", "wood", "quack", "FIXED");
         validateResponse(runner, "${duckId}"); //Валидация обновления
+        validateDuckInDatabase(runner, "${duckId}", "black", "0.05", "wood", "quack", "FIXED");
 
     }
 
@@ -40,12 +40,11 @@ public class UpdateTest extends UpdateClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-
         updateDuck(runner, "black", 0.05, "${duckId}", "wood", "quack", "FIXED");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("Duck with id = " + "${duckId}" + " is updated");
         validateResponse(runner, expectedResponse);
+        validateDuckInDatabase(runner, "${duckId}", "black", "0.05", "wood", "quack", "FIXED");
     }
 
     @Test(description = "Обновление цвета и звука утки с помощью resources")
@@ -56,9 +55,8 @@ public class UpdateTest extends UpdateClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-
         updateDuck(runner, "black", 0.05, "${duckId}", "wood", "quack", "FIXED");
         validateResponseResources(runner, "updateTest/DuckUpdateMessageResponse.json");
+        validateDuckInDatabase(runner, "${duckId}", "black", "0.05", "wood", "quack", "FIXED");
     }
 }

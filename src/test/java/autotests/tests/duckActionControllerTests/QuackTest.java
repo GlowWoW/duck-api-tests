@@ -26,7 +26,6 @@ public class QuackTest extends QuackClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=" + duckId)));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (" + duckId + ",'yellow', 0.03,'wood','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-
         quackDuck(runner, duckId);
         DuckQuackResponse expectedResponse = new DuckQuackResponse()
                 .sound("quack-quack"); //"repetitionCount"="2", "soundCount"="1"
@@ -42,9 +41,7 @@ public class QuackTest extends QuackClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=" + duckId)));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (" + duckId + ",'yellow', 0.03,'wood','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-
         quackDuck(runner, duckId);
         validateResponseResources(runner, "quackTest/DuckQuackMessageResponse.json");
-        duckDelete(runner, duckId);
     }
 }

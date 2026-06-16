@@ -11,6 +11,8 @@ import io.qameta.allure.Story;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
+
 @Epic("Тесты duck-controller")
 @Feature("Создание уточки")
 @Story("Эндпоинт /api/duck/create")
@@ -18,7 +20,8 @@ public class CreateTest extends CreateClient {
     @Test(description = "Создание утки с material = rubber, с помощью payloads")
     @CitrusTest
     public void createRubberWithPayloads(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("duckId", "citrus:randomNumber(6)");
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         DuckProperties duckProperties = new DuckProperties()
                 .color("yellow")
                 .height(0.03)
@@ -28,18 +31,16 @@ public class CreateTest extends CreateClient {
         createDuck(runner, duckProperties);
         validateResponse(runner, "@isNumber()@", "yellow", 0.03, "rubber", "quack", "FIXED");
         validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-        deleteDuckFromDB(runner, "${duckId}");
     }
 
-
-    @Test(description = "Создание утки с material = wood")
+    @Test(description = "Создание утки с material = rubber, с помощью resources")
     @CitrusTest
-    public void createWood(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("duckId", "citrus:randomNumber(6)");
-        String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'wood','quack', 'FIXED');";
-        databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "wood", "quack", "FIXED");
-        deleteDuckFromDB(runner, "${duckId}");
+    public void createWoodWithResources(@Optional @CitrusResource TestCaseRunner runner) {
+        runner.$(doFinally().actions(context ->
+                databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
+        createDuckResources(runner, "createTest/DuckProperties.json");
+        validateResponseResources(runner, "createTest/DuckPropertiesResponse.json");
+        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
     }
 }
 

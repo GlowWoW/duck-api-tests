@@ -25,8 +25,6 @@ public class FlyTest extends FlyClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'ACTIVE');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "ACTIVE");
-
         flyDuck(runner, "${duckId}");
         validateResponse(runner, "I am flying :)");
     }
@@ -39,8 +37,6 @@ public class FlyTest extends FlyClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "FIXED");
-
         flyDuck(runner, "${duckId}");
         DuckMessageResponse expectedResponse = new DuckMessageResponse()
                 .message("I can not fly :C");
@@ -55,8 +51,6 @@ public class FlyTest extends FlyClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'rubber','quack', 'UNDEFINED');";
         databaseUpdate(runner, sqlInsert);
-        validateDuckInDatabase(runner, "${duckId}", "yellow", "0.03", "rubber", "quack", "UNDEFINED");
-
         flyDuck(runner, "${duckId}");
         validateResponseResources(runner, "flyTest/DuckFlyMessageResponse.json");
     }

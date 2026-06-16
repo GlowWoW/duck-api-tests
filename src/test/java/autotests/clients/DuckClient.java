@@ -51,11 +51,6 @@ public class DuckClient extends TestNGCitrusSpringSupport {
 
     }
 
-    protected void deleteDuckFromDB(TestCaseRunner runner, String duckId) {
-        runner.$(sql(testDb)
-                .statement("DELETE FROM DUCK WHERE ID=" + duckId));
-    }
-
     @Step("Создание утки через передачу string в body (json)")
     public void createDuck(TestCaseRunner runner, String color, double height, String material, String sound, String wingsState) {
         String path = "/api/duck/create";

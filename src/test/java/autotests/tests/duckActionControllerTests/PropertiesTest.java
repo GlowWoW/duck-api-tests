@@ -27,7 +27,6 @@ public class PropertiesTest extends PropertiesClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'wood','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-
         propertiesDuck(runner, "${duckId}");
         validateResponse(runner, null);
     }
@@ -40,7 +39,6 @@ public class PropertiesTest extends PropertiesClient {
                 databaseUpdate(runner, "DELETE FROM DUCK WHERE ID=${duckId}")));
         String sqlInsert = "INSERT INTO DUCK (id,color, height, material,sound, wings_state) VALUES (${duckId},'yellow', 0.03,'wood','quack', 'FIXED');";
         databaseUpdate(runner, sqlInsert);
-
         propertiesDuck(runner, "${duckId}");
         validateResponseResources(runner, "propertiesWood/DuckPropertiesWoodResponse.json");
     }
@@ -57,7 +55,6 @@ public class PropertiesTest extends PropertiesClient {
 
         propertiesDuck(runner, "${duckId}");
         validateResponseResources(runner, "propertiesRubber/DuckPropertiesRubberResponse.json");
-        duckDelete(runner, "${duckId}");//Удаление после создания
     }
 
     @Test(description = "Свойства утки с материалом rubber, Payloads")
@@ -77,6 +74,5 @@ public class PropertiesTest extends PropertiesClient {
                 .sound("quack")
                 .wingsState(DuckProperties.WingsState.FIXED);
         validateResponse(runner, expectedResponse);
-        duckDelete(runner, "${duckId}");//Удаление после создания
     }
 }
